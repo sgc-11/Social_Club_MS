@@ -1,0 +1,47 @@
+
+services:
+  api-gateway:
+    build: ./api_gateway
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./api_gateway/src:/usr/src/app/src
+    command: npm run start:dev
+    environment:
+      - PORT=3000
+
+  bookings_microservice:
+    build: ./bookings-microservice
+    volumes:
+      - ./bookings-microservice/src:/usr/src/app/src
+    command: npm run start:dev
+
+
+  orders_microservice:
+    build: ./orders-microservice
+    volumes:
+      - ./orders-microservice/src:/usr/src/app/src
+    command: npm run start:dev
+
+  nats:
+    image: nats
+    ports:
+      - "4222:4222"
+
+  postgres:
+    image: postgres
+    environment:
+      - POSTGRES_USER=testuser
+      - POSTGRES_PASSWORD=testuser123
+      - POSTGRES_DB=orders_db
+    ports:
+      - "5432:5432"
+
+  sqlite_db:
+    image: nouchka/sqlite3
+    volumes:
+      - ./orders-microservice/src:/usr/src/app
+    command: sqlite3 /usr/src/app/orders.db
+
+
+
